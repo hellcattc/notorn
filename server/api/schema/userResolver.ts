@@ -9,7 +9,7 @@ import {
     signUp,
     userProfile 
 } from "../methods/userMethods";
-import UserInputType from "./InputTypes/userInputType";
+import UserInputType from "./InputTypes/UserInputType";
 
 @Resolver()
 export default class userResolver {
@@ -17,7 +17,7 @@ export default class userResolver {
     @Query(returns => User)
     async userProfileAPI(@Arg("user") userId: string) : Promise<User> {
         const reqUser = userProfile(userId)
-        return await reqUser
+        return (await reqUser)
     }
 
     @Mutation(returns => User)

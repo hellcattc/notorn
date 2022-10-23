@@ -1,8 +1,8 @@
 import { 
     Length
 } from 'class-validator';
-import { Field, ObjectType, ID } from 'type-graphql';
-import { Entity, Column, PrimaryGeneratedColumn, Generated } from 'typeorm'
+import { Field, ObjectType } from 'type-graphql';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
 
 @ObjectType()
 @Entity('users')
