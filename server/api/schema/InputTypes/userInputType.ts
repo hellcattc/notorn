@@ -1,19 +1,16 @@
 import { Field, InputType } from "type-graphql";
 import {
-    Min,
-    Max
+    Length
 } from 'class-validator'
-import { User } from "../entities/user";
+import { User } from "../../entities/user";
 
 @InputType()
 export default class UserInputType implements Partial<User> {
-    // @Min(0)
-    // @Max(14)
+    @Length(0, 16)
     @Field(type => String, {nullable: true})
     username?: string
 
-    // @Min(6)
-    // @Max(24)
+    @Length(6,30)
     @Field(type => String)
     password!: string
 }

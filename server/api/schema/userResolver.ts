@@ -9,7 +9,7 @@ import {
     signUp,
     userProfile 
 } from "../methods/userMethods";
-import UserInputType from "./userInputType";
+import UserInputType from "./InputTypes/userInputType";
 
 @Resolver()
 export default class userResolver {

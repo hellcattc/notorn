@@ -1,6 +1,5 @@
 import { 
-    Max,
-    Min 
+    Length
 } from 'class-validator';
 import { Field, ObjectType, ID } from 'type-graphql';
 import { Entity, Column, PrimaryGeneratedColumn, Generated } from 'typeorm'
@@ -14,12 +13,10 @@ export class User {
 
     @Field(type => String)
     @Column()
-    // @Min(0)
-    // @Max(10)
+    @Length(0, 16)
     username?: string;
 
     @Column()
-    // @Min(6)
-    // @Max(30)
+    @Length(6,30)
     password!: string;
 }
