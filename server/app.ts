@@ -16,6 +16,8 @@ const bootstrap = async () => {
         resolvers: [userResolver]
     })
 
+    app.use(cors())
+
     app.use('/graphql', graphqlHTTP({
         schema, 
         graphiql: true

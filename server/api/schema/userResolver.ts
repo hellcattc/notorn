@@ -4,6 +4,7 @@ import {
     Arg,
     Query
  } from "type-graphql";
+import { ReturningStatementNotSupportedError } from "typeorm";
 import { User } from "../entities/user";
 import { 
     signUp,
@@ -17,7 +18,7 @@ export default class userResolver {
     @Query(returns => User)
     async userProfileAPI(@Arg("user") userId: string) : Promise<User> {
         const reqUser = userProfile(userId)
-        return (await reqUser)
+        return await reqUser
     }
 
     @Mutation(returns => User)

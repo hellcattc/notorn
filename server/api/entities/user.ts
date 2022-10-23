@@ -2,7 +2,7 @@ import {
     Length
 } from 'class-validator';
 import { Field, ObjectType } from 'type-graphql';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm'
 
 @ObjectType()
 @Entity('users')
@@ -12,11 +12,15 @@ export class User {
     readonly userid!: string;
 
     @Field(type => String)
-    @Column()
+    @PrimaryColumn("varchar")
+    email!: string;
+
+    @Field(type => String)
+    @Column("varchar")
     @Length(0, 16)
     username?: string;
 
-    @Column()
+    @Column("varchar")
     @Length(6,30)
     password!: string;
 }
