@@ -1,5 +1,7 @@
 import { DataSource } from 'typeorm';
+import { User } from '../api/entities/user'
 require('dotenv').config()
+
 
 const PGDataSource = new DataSource({
     type: 'postgres',
@@ -10,7 +12,7 @@ const PGDataSource = new DataSource({
     password: process.env.PGPASSWORD,
     logging: true,
     maxQueryExecutionTime: 10_000,
-    entities: ['../api/entities/*.ts'],
+    entities: [User],
     synchronize: false
 })
 

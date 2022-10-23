@@ -12,5 +12,5 @@ export async function signUp(input: DeepPartial<User>): Promise<User> {
 }
 
 export async function userProfile(input: string): Promise<User> {
-    return userRepository.findOneBy({userId: input}) as Promise<User>
+    return userRepository.findOneBy({userid: input}) as Promise<User>
 }

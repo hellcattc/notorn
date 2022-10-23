@@ -3,14 +3,14 @@ import {
     Min 
 } from 'class-validator';
 import { Field, ObjectType, ID } from 'type-graphql';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, Generated } from 'typeorm'
 
 @ObjectType()
 @Entity('users')
 export class User {
     @Field(type => String)
     @PrimaryGeneratedColumn("uuid")
-    readonly userId!: string;
+    readonly userid!: string;
 
     @Field(type => String)
     @Column()
