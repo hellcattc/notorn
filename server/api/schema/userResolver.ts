@@ -4,7 +4,6 @@ import {
     Arg,
     Query
  } from "type-graphql";
-import { ReturningStatementNotSupportedError } from "typeorm";
 import { User } from "../entities/user";
 import { 
     signUp,
