@@ -18,12 +18,14 @@ const bootstrap = async () => {
 
     app.use(cors())
 
+    console.log(process.env.NODE_ENV == 'development')
+
     app.use('/graphql', graphqlHTTP({
         schema, 
-        graphiql: true
+        graphiql: process.env.NODE_ENV == 'development'
     }))
 
-    app.listen(3000, () => console.log(`Server port ${3000}`));
+    app.listen(port, () => console.log(`Server port ${port}`));
 
     PGDataSource
         .initialize()
