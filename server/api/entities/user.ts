@@ -17,10 +17,8 @@ export class User {
 
     @Field(type => String)
     @Column("varchar")
-    @Length(0, 16)
     username?: string;
 
     @Column("varchar")
-    @Length(6,30)
     password!: string;
 }

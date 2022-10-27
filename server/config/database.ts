@@ -1,9 +1,4 @@
-import { DataSource } from 'typeorm';
-require('dotenv').config()
-import { options } from "../../ormconfig"
+import pgDataSource from "./connectPS";
+import { connectRedis, redisClient  } from "./connectRedis";
 
-
-//Don't know how to handle it, any is workaround.
-const PGDataSource = new DataSource( options as any)
-
-export default PGDataSource
+export {pgDataSource, connectRedis, redisClient}
