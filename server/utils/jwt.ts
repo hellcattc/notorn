@@ -13,12 +13,17 @@ export const signJwt = (
     signKey: 'accessPrivate' | 'refreshPrivate',
     options?: SignOptions
 ) => {
-    const privateKey = Buffer.from(process.env[keys[signKey]] as string, 'base64').toString('ascii');
+    const privateKey = Buffer.from(process.env[keys[signKey]] as string, 'base64').toString('utf-8');
 
-    return jwt.sign(payload, privateKey, {
-        ...options,
-        algorithm: 'RS256',
-    })
+    try {
+        return jwt.sign(payload, privateKey.trim(), {
+            ...options,
+            algorithm: 'HS256',
+        })
+    } catch (err) {
+        console.log('wtf')
+        return 'nothing happens'
+    }
 } 
 
 export const verifyJwt = <T>(
@@ -27,7 +32,7 @@ export const verifyJwt = <T>(
 ): T | null => {
     const publicKey = Buffer.from(process.env[keys[verifyKey]] as string, 'base64').toString('ascii');
     try {
-        return jwt.verify(token, publicKey, {
+        return jwt.verify(token, publicKey.trim(), {
             algorithms: ['RS256']
         }) as T
     } catch (err) {

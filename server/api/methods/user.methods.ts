@@ -1,3 +1,4 @@
+import { SignUpResponse } from './../schema/UserTypes';
 import { UserContext } from '../../utils/authTools';
 import PGDataSource from "../../config/connectPS";
 import * as bcrypt from 'bcrypt'
@@ -24,32 +25,39 @@ export async function signUp(input: Partial<User>, {res}: UserContext): Promise<
             email: input.email}
         })) return Promise.reject("User already exists")
 
-    
     const userId = (await userRepository.save(userRepository.create(input))).userid
-    const accessToken = signJwt(
-        userId, 
-        'accessPrivate', 
-        {expiresIn: accessExpires}
-    )
-    const refreshToken = signJwt(
-        userId,
-        'refreshPrivate',
-        {expiresIn: refreshExpires}
-    )
+    console.log(userId)
+    try {
+        const accessToken = signJwt(
+            userId, 
+            'accessPrivate', 
+            // {expiresIn: accessExpires}
+        )
 
-    redisClient.set(userId, accessToken, {
-        EX: accessExpires
-    })
-    
-    res.cookie('access_token', accessToken, {
-        ...cookieOptions, maxAge: accessExpires, expires: new Date(Date.now() + accessExpires)
-    })
+        const refreshToken = signJwt(
+            userId,
+            'refreshPrivate',
+            // {expiresIn: refreshExpires}
+        )
 
-    res.cookie('refresh_token', refreshToken, {
-        ...cookieOptions, maxAge: refreshExpires, expires: new Date(Date.now() + refreshExpires)
-    })
+        redisClient.set(userId, accessToken, {
+            EX: accessExpires
+        })
+        
+        res.cookie('access_token', accessToken, {
+            ...cookieOptions, maxAge: accessExpires, expires: new Date(Date.now() + accessExpires)
+        })
 
-    return { accessToken, refreshToken } 
+        res.cookie('refresh_token', refreshToken, {
+            ...cookieOptions, maxAge: refreshExpires, expires: new Date(Date.now() + refreshExpires)
+        })
+
+        return { accessToken, refreshToken } as SignUpResponse
+        
+    } catch (err) {
+        console.log("Here is error")
+        return { 1: "shit", 2: "shit"}
+    }
 }
 
 export async function userProfile(input: string): Promise<User> {

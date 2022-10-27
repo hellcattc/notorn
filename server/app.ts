@@ -1,11 +1,11 @@
-import userResolver from './api/schema/UserResolver';
+import 'reflect-metadata'
+import userResolver from './api/resolvers/UserResolver';
 import express, { Application, Request, Response } from 'express';
 require('dotenv').config();
 import { graphqlHTTP, GraphQLParams, Options } from 'express-graphql';
 import { pgDataSource, connectRedis } from "./config/database";
 import cors from 'cors';
 import { buildSchema } from 'type-graphql';
-import 'reflect-metadata'
 import { express as voyagerMiddleware } from 'graphql-voyager/middleware'
 import { contextBuilder, customAuthChecker } from './utils/authTools'
 
