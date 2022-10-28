@@ -15,6 +15,7 @@ const refreshExpires = parseInt(process.env.REFRESH_EXPIRES as string)*60*1000
 const cookieOptions: CookieOptions = {
     httpOnly: true,
     domain: 'localhost',
+    sameSite: 'strict'
 }
 
 export async function signUp(input: Partial<User>, {res}: UserContext): Promise<Object> {
@@ -31,32 +32,28 @@ export async function signUp(input: Partial<User>, {res}: UserContext): Promise<
         const accessToken = signJwt(
             userId, 
             'accessPrivate', 
-            // {expiresIn: accessExpires}
+            {expiresIn: accessExpires}
         )
 
         const refreshToken = signJwt(
             userId,
             'refreshPrivate',
-            // {expiresIn: refreshExpires}
+            {expiresIn: refreshExpires}
         )
 
         redisClient.set(userId, accessToken, {
             EX: accessExpires
-        })
-        
-        res.cookie('access_token', accessToken, {
-            ...cookieOptions, maxAge: accessExpires, expires: new Date(Date.now() + accessExpires)
         })
 
         res.cookie('refresh_token', refreshToken, {
             ...cookieOptions, maxAge: refreshExpires, expires: new Date(Date.now() + refreshExpires)
         })
 
-        return { accessToken, refreshToken } as SignUpResponse
-        
+        return { accessToken } as SignUpResponse
+
     } catch (err) {
-        console.log("Here is error")
-        return { 1: "shit", 2: "shit"}
+        console.log(err)
+        throw err
     }
 }
 
@@ -65,25 +62,21 @@ export async function userProfile(input: string): Promise<User> {
 }
 
 export async function isAuth(userToken: string): Promise<Boolean> {
-    const decoded = verifyJwt(userToken, 'accessPublic');
+    const decoded = verifyJwt<String>(userToken, 'accessPublic');
 
     if (!decoded) {
         return false
     }
 
-    const currentSession = await redisClient.get(decoded as string);
-
-    if (!currentSession) {
-        return false
-    }
-
-    const user = userRepository.findBy({
-        userid: currentSession
+    const user = await userRepository.findOneBy({
+        userid: decoded as string
     })
 
     if (!user) {
         return false
     }
+
+    const serverAccessToken = user?.accessToken
 
     return true
 }

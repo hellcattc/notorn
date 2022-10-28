@@ -2,7 +2,7 @@ import {
     Length
 } from 'class-validator';
 import { Field, ObjectType } from 'type-graphql';
-import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, ColumnTypeUndefinedError } from 'typeorm'
 
 @ObjectType()
 @Entity('users')
@@ -21,4 +21,8 @@ export class User {
 
     @Column("varchar")
     password!: string;
+
+    @Field(type => String)
+    @Column("varchar")
+    accessToken?: string;
 }

@@ -12,9 +12,11 @@ export const contextBuilder = (req: Request, res: Response): UserContext => {
     return {
         req: req,
         res: res,
+        //
         userToken: req.cookies?.token ?? 
         (req.headers.authorization && req.headers.authorization.startsWith("Bearer") && req.headers.authorization.split('')[1]) ?? 
         null
+        //
     } as UserContext
 }
 
