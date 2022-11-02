@@ -5,7 +5,8 @@
   "main": "app.ts",
   "scripts": {
     "start": "node server/app.ts",
-    "dev": "nodemon server/app.ts"
+    "dev": "nodemon server/app.ts",
+    "typeorm": "typeorm-ts-node-commonjs"
   },
   "keywords": [],
   "author": "",

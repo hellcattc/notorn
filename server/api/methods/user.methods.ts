@@ -6,6 +6,8 @@ import { User } from "../entities/user";
 import { redisClient } from "../../config/connectRedis";
 import { signJwt, verifyJwt } from "../../utils/jwt";
 import { CookieOptions } from 'express';
+import { JwtPayload } from 'jsonwebtoken';
+import * as errConstants from '../../errConstants'
 
 const userRepository = PGDataSource.getRepository(User);
 
@@ -26,33 +28,34 @@ export async function signUp(input: Partial<User>, {res}: UserContext): Promise<
             email: input.email}
         })) return Promise.reject("User already exists")
 
-    const userId = (await userRepository.save(userRepository.create(input))).userid
-    console.log(userId)
+    const user = await userRepository.save(userRepository.create(input))
+    console.log(user)
     try {
         const accessToken = signJwt(
-            userId, 
+            user, 
             'accessPrivate', 
             {expiresIn: accessExpires}
         )
 
         const refreshToken = signJwt(
-            userId,
+            user,
             'refreshPrivate',
             {expiresIn: refreshExpires}
         )
 
-        redisClient.set(userId, accessToken, {
-            EX: accessExpires
+        const tokens = { accessToken, refreshToken } as SignUpResponse
+
+        redisClient.set(refreshToken, JSON.stringify(tokens), {
+            EX: accessExpires,
         })
 
         res.cookie('refresh_token', refreshToken, {
             ...cookieOptions, maxAge: refreshExpires, expires: new Date(Date.now() + refreshExpires)
         })
 
-        return { accessToken } as SignUpResponse
+        return { accessToken, refreshToken } as SignUpResponse
 
     } catch (err) {
-        console.log(err)
         throw err
     }
 }
@@ -62,21 +65,25 @@ export async function userProfile(input: string): Promise<User> {
 }
 
 export async function isAuth(userToken: string): Promise<Boolean> {
-    const decoded = verifyJwt<String>(userToken, 'accessPublic');
+    const decoded = verifyJwt<JwtPayload>(userToken, 'accessPublic');
 
-    if (!decoded) {
+    const id = decoded?.sub ?? null
+
+    if (!id) {
         return false
     }
 
     const user = await userRepository.findOneBy({
-        userid: decoded as string
+        userid: id
     })
 
     if (!user) {
         return false
-    }
+    }   
 
-    const serverAccessToken = user?.accessToken
+    if (user.accessToken != userToken) {
+        throw errConstants.ClientError("UNAUTHORIZED")
+    }
 
     return true
 }

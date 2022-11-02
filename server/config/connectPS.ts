@@ -1,7 +1,18 @@
 import { DataSource } from 'typeorm';
-import { options } from "../../ormconfig"
+require('dotenv').config()
 
-//Don't know how to handle it, any is workaround.
-const pgDataSource = new DataSource(options as any)
+const pgDataSource = new DataSource({
+    type: 'postgres',
+    url: process.env.DATABASE_URL,
+    host: process.env.PGHOST,
+    port: parseInt(process.env.PGPORT as string),
+    username: process.env.PGUSER,
+    password: process.env.PGPASSWORD,
+    logging: true,
+    maxQueryExecutionTime: 10_000,
+    entities: ['server/api/entities/*.ts'],
+    synchronize: false,
+    migrations: ['server/migrations/*.ts']
+})
 
 export default pgDataSource
