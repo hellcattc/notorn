@@ -6,13 +6,13 @@ import { User } from "../entities/user";
 import { redisClient } from "../../config/connectRedis";
 import { signJwt, verifyJwt } from "../../utils/jwt";
 import { CookieOptions } from 'express';
-import { JwtPayload } from 'jsonwebtoken';
+import { JwtPayload, SignOptions } from 'jsonwebtoken';
 import * as errConstants from '../../errConstants'
 
 const userRepository = PGDataSource.getRepository(User);
 
-const accessExpires = parseInt(process.env.ACCESS_EXPIRES as string)*60*1000
-const refreshExpires = parseInt(process.env.REFRESH_EXPIRES as string)*60*1000
+const accessExpires = (parseInt(process.env.ACCESS_EXPIRES as string)*60*1000)
+const refreshExpires = (parseInt(process.env.REFRESH_EXPIRES as string)*60*1000)
 
 const cookieOptions: CookieOptions = {
     httpOnly: true,
@@ -30,17 +30,18 @@ export async function signUp(input: Partial<User>, {res}: UserContext): Promise<
 
     const user = await userRepository.save(userRepository.create(input))
     console.log(user)
+    
     try {
         const accessToken = signJwt(
             user, 
             'accessPrivate', 
-            {expiresIn: accessExpires}
+            // {expiresIn: accessExpires.toString()} as SignOptions
         )
 
         const refreshToken = signJwt(
             user,
             'refreshPrivate',
-            {expiresIn: refreshExpires}
+            // {expiresIn: refreshExpires.toString()} as SignOptions
         )
 
         const tokens = { accessToken, refreshToken } as SignUpResponse
@@ -53,7 +54,9 @@ export async function signUp(input: Partial<User>, {res}: UserContext): Promise<
             ...cookieOptions, maxAge: refreshExpires, expires: new Date(Date.now() + refreshExpires)
         })
 
-        return { accessToken, refreshToken } as SignUpResponse
+        console.log(accessToken, refreshToken)
+
+        return {accessToken, refreshToken} as SignUpResponse
 
     } catch (err) {
         throw err
@@ -81,7 +84,7 @@ export async function isAuth(userToken: string): Promise<Boolean> {
         return false
     }   
 
-    if (user.accessToken != userToken) {
+    if (user.accessToken == userToken || decoded?.exp) {
         throw errConstants.ClientError("UNAUTHORIZED")
     }
 
