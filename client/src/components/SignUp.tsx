@@ -1,6 +1,6 @@
 import React, { useState }  from 'react'
 import { gql, useMutation } from '@apollo/client'
-import { UserSignUp, TokenData } from '../types/ApolloClientTypes'
+import { UserSignUp, SignResponse } from '../types/ApolloClientTypes'
 
 const SIGN_UP = gql`
     mutation ($username: String, $email: String!, $password: String!) {
@@ -13,7 +13,9 @@ const SIGN_UP = gql`
 
 const SignUp = () => {
 
-    const [signUpUser, { data, loading, error}] = useMutation(SIGN_UP)
+    const [signUpUser, { data, loading, error }] = useMutation<SignResponse>(SIGN_UP, {
+        onCompleted: (data) => console.log(data)
+    })
 
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
