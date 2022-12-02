@@ -1,5 +1,5 @@
 import { SignUpResponse } from './../schema/UserTypes';
-import { UserContext } from '../../utils/authTools';
+import { IUserContext } from '../../utils/authTools';
 import PGDataSource from "../../config/connectPS";
 import * as bcrypt from 'bcrypt'
 import { User } from "../entities/user";
@@ -20,7 +20,7 @@ const cookieOptions: CookieOptions = {
     sameSite: 'strict'
 }
 
-export async function signUp(input: Partial<User>, {res}: UserContext): Promise<Object> {
+export async function signUp(input: Partial<User>, {res}: IUserContext): Promise<Object> {
     const hashedPassword = await bcrypt.hash(input.password as string, 12);
     input.password = hashedPassword;
     if (await userRepository.findOne({
@@ -63,8 +63,8 @@ export async function signUp(input: Partial<User>, {res}: UserContext): Promise<
     }
 }
 
-export async function userProfile(input: string): Promise<User> {
-    return userRepository.findOneBy({userid: input}) as Promise<User>
+export async function userProfile(userCtx: IUserContext): Promise<User> {
+    return userRepository.findOneBy({userid: userCtx.userId}) as Promise<User>
 }
 
 export async function isAuth(userToken: string): Promise<Boolean> {

@@ -1,13 +1,12 @@
 import './App.scss'
-import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client'
-import SignUp from './components/SignUp'
+import SignUp from './pages/SignUpPage'
+import { useState } from 'react'
 
 function App() {
-
   return (
-    <div className="App">
-      <SignUp />
-    </div>
+    <>
+        <SignUp />
+    </>
   )
 }
 

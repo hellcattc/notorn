@@ -1,8 +1,10 @@
-import React, { useState }  from 'react'
+import React, { useState, useContext }  from 'react'
 import { gql, useMutation } from '@apollo/client'
 import { UserSignUp, SignResponse } from '../types/ApolloClientTypes'
 import { TextField, Grid, Container, Button, Box } from '@mui/material'
-import * as styles from './SignUp.module.scss'
+import { tokenContext } from '../context/TokenProvider'
+import { useNavigate } from 'react-router-dom'
+
 
 const SIGN_UP = gql`
     mutation ($username: String, $email: String!, $password: String!) {
@@ -14,9 +16,18 @@ const SIGN_UP = gql`
 `
 
 const SignUp = () => {
+    const { setCurrentToken } = useContext(tokenContext)
+    const reroute = useNavigate();
 
     const [signUpUser, { data, loading, error }] = useMutation<SignResponse>(SIGN_UP, {
-        onCompleted: (data) => console.log(data)
+        onCompleted: (data) => {
+            console.log(data)
+            const { accessToken, refreshToken } = data.signUpAPI
+            setCurrentToken(accessToken)
+            localStorage.setItem('refreshToken', refreshToken) 
+            document.cookie = `token=${accessToken}; SameSite=strict; `
+            reroute('/me')
+        }
     })
 
     const [username, setUsername] = useState('')

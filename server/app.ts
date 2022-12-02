@@ -8,6 +8,7 @@ import cors from 'cors';
 import { buildSchema } from 'type-graphql';
 import { express as voyagerMiddleware } from 'graphql-voyager/middleware'
 import { contextBuilder, customAuthChecker } from './utils/authTools'
+import cookieParser from 'cookie-parser'
 
 const port: Number = parseInt(process.env.PORT as string) || 5000
 
@@ -24,7 +25,12 @@ const bootstrap = async () => {
         graphiql: process.env.NODE_ENV == 'development',
     } as any
 
-    app.use(cors())
+    app.use(cors({
+        origin: 'http://localhost:5173/',
+        credentials: true
+    }))
+    
+    app.use(cookieParser())
 
     app.use('/graphql', 
         graphqlHTTP(((req: Request, res: Response, _params: GraphQLParams) => {

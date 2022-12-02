@@ -1,4 +1,4 @@
-import { SignUpResponse, UserInputType } from './../schema/UserTypes';
+import { SignUpResponse, UserInputType } from '../schema/UserTypes';
 import { 
     Resolver,
     Mutation,
@@ -12,20 +12,20 @@ import {
     signUp,
     userProfile 
 } from "../methods/user.methods";
-import { UserContext } from "../../utils/authTools"
+import { IUserContext } from "../../utils/authTools"
 
 @Resolver()
 export default class UserResolver {
 
     @Authorized()
     @Query(returns => User)
-    async userProfileAPI(@Arg("user") userId: string) : Promise<User> {
-        const reqUser = userProfile(userId)
+    async userProfileAPI(@Ctx() ctx: IUserContext) : Promise<User> {
+        const reqUser = userProfile(ctx)
         return await reqUser
     }
 
     @Mutation(returns => SignUpResponse)
-    async signUpAPI(@Arg("user") newUserData: UserInputType, @Ctx() ctx: UserContext): Promise<Object> {
+    async signUpAPI(@Arg("user") newUserData: UserInputType, @Ctx() ctx: IUserContext): Promise<Object> {
         console.log("Error")
         const tokens = await signUp(newUserData, ctx)
         return tokens as SignUpResponse
