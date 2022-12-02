@@ -1,6 +1,8 @@
 import React, { useState }  from 'react'
 import { gql, useMutation } from '@apollo/client'
 import { UserSignUp, SignResponse } from '../types/ApolloClientTypes'
+import { TextField, Grid, Container, Button, Box } from '@mui/material'
+import * as styles from './SignUp.module.scss'
 
 const SIGN_UP = gql`
     mutation ($username: String, $email: String!, $password: String!) {
@@ -22,7 +24,7 @@ const SignUp = () => {
     const [password, setPassword] = useState('')
 
     const handleUserSignUp = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
+    	e.preventDefault()
         signUpUser({variables: {username, email, password} as UserSignUp})
     }
 
@@ -30,28 +32,49 @@ const SignUp = () => {
     if (error) return <p>{error.message}</p>
 
     return (
-        <div>
-            <form onSubmit={(e) => handleUserSignUp(e)}>
-                <input 
-                    type = 'text'
-                    value = {username}
-                    onChange = {(e) => setUsername(e.target.value)}
-                ></input>
-                <input
-                    type = 'text'
-                    value = {email}
-                    onChange = {(e) => setEmail(e.target.value)}
-                ></input>
-                <input
-                    type = 'text'
-                    value = {password}
-                    onChange = {(e) => setPassword(e.target.value)}
-                ></input>
-                <button type='submit'>Sign Up</button>
-            </form>
-            {data?.signUpAPI.accessToken ?? "No Access token"}
-            {data?.signUpAPI.refreshToken ?? "No Refresh token"}
-        </div>
+        <Box 
+            height='100vh'
+            justifyContent='center'
+            display='flex'
+            alignItems='center'
+        >
+            <Container 
+                maxWidth = 'sm'
+            >
+                <form onSubmit={(e) => handleUserSignUp(e)}>
+                    <Grid container direction='column' rowGap={2} paddingTop={'3%'}>
+                        <TextField 
+                            id='username' 
+                            autoFocus={true}
+                            value={username}
+                            variant='outlined'
+                            onChange={(e) => setUsername(e.target.value)}
+                            type='text'
+                            placeholder='Enter your username'
+                        ></TextField>
+                        <TextField 
+                            id='email' 
+                            value={email}
+                            variant='outlined'
+                            onChange={(e) => setEmail(e.target.value)}
+                            type='text'
+                            placeholder='Enter your email'
+                        ></TextField>
+                        <TextField 
+                            id='email' 
+                            value={password}
+                            variant='outlined'
+                            onChange={(e) => setPassword(e.target.value)}
+                            type='text'
+                            placeholder='Enter your password'
+                        ></TextField>
+                        <Button type='submit'>Sign Up</Button>
+                    </Grid>
+                </form>
+                {data?.signUpAPI.accessToken ?? "No Access token"}
+                {data?.signUpAPI.refreshToken ?? "No Refresh token"}
+            </Container>
+        </Box>
     )
 }
 

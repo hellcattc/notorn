@@ -3,8 +3,7 @@ require('dotenv').config()
 
 const pgDataSource = new DataSource({
     type: 'postgres',
-    url: process.env.DATABASE_URL,
-    host: process.env.PGHOST,
+    host: 'localhost',
     port: parseInt(process.env.PGPORT as string),
     username: process.env.PGUSER,
     password: process.env.PGPASSWORD,

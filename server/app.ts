@@ -39,14 +39,18 @@ const bootstrap = async () => {
 
     app.listen(port, () => console.log(`Server port ${port}`));
 
-    pgDataSource
-        .initialize()
-        .then(() => {
-            console.log("Succesfully initialized DB")
-        })
-        .catch((err) => {
-            console.log("Error initializing DB: %d", err )
-        })
+    try { 
+        pgDataSource
+            .initialize()
+            .then(() => {
+                console.log("Succesfully initialized DB")
+            })
+            .catch((err) => {
+                console.log("Error initializing DB: %d", err )
+            }) 
+    } catch(err) {
+        console.log(err)
+    }
 
     connectRedis()
 }
