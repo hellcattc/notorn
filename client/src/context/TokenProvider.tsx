@@ -8,13 +8,13 @@ const TokenProvider = ({ children }: React.PropsWithChildren<{}>) => {
 
     return (
         <tokenContext.Provider 
-					value={{
-						currentToken: token,
-						setCurrentToken: setToken
-					}}
-				>
-					{children}
-				</tokenContext.Provider>
+			value={{
+				currentToken: token,
+				setCurrentToken: setToken
+			}}
+		>
+			{children}
+		</tokenContext.Provider>
     )
 }
 

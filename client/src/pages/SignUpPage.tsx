@@ -25,8 +25,8 @@ const SignUp = () => {
             const { accessToken, refreshToken } = data.signUpAPI
             setCurrentToken(accessToken)
             localStorage.setItem('refreshToken', refreshToken) 
-            document.cookie = `token=${accessToken}; SameSite=strict; `
-            reroute('/me')
+            document.cookie = `token=${accessToken}; SameSite=strict; domain=localhost`
+            // reroute('/me')
         }
     })
 
@@ -82,8 +82,6 @@ const SignUp = () => {
                         <Button type='submit'>Sign Up</Button>
                     </Grid>
                 </form>
-                {data?.signUpAPI.accessToken ?? "No Access token"}
-                {data?.signUpAPI.refreshToken ?? "No Refresh token"}
             </Container>
         </Box>
     )

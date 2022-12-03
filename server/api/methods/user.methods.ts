@@ -68,25 +68,30 @@ export async function userProfile(userCtx: IUserContext): Promise<User> {
 }
 
 export async function isAuth(userToken: string): Promise<Boolean> {
-    const decoded = verifyJwt<JwtPayload>(userToken, 'accessPublic');
+    try {
+        const decoded = verifyJwt<JwtPayload>(userToken, 'accessPublic');
 
-    const id = decoded?.sub ?? null
+        const id = decoded?.userid ?? null
 
-    if (!id) {
-        return false
+        if (!id) {
+            return false
+        }
+
+        const user = await userRepository.findOneBy({
+            userid: id
+        })
+
+        if (!user) {
+            return false
+        }   
+
+        if (user.accessToken == userToken || decoded?.exp) {
+            throw errConstants.ClientError("UNAUTHORIZED")
+        }
+
+        return true
+    } catch (err) {
+        console.log(err)
+        throw err
     }
-
-    const user = await userRepository.findOneBy({
-        userid: id
-    })
-
-    if (!user) {
-        return false
-    }   
-
-    if (user.accessToken == userToken || decoded?.exp) {
-        throw errConstants.ClientError("UNAUTHORIZED")
-    }
-
-    return true
 }

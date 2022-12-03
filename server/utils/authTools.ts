@@ -3,7 +3,6 @@ import { AuthChecker } from "type-graphql";
 import { Request, Response } from "express"
 import { isAuth } from '../api/methods/user.methods';
 import { verifyJwt } from "./jwt";
-import { CannotAttachTreeChildrenEntityError } from 'typeorm';
 export interface IUserContext {
     req: Request
     res: Response
@@ -16,10 +15,8 @@ export const contextBuilder = (req: Request, res: Response): IUserContext => {
         const userToken = (req.cookies?.token ?? 
         (req.headers.authorization && req.headers.authorization.startsWith("Bearer") && req.headers.authorization.split('')[1]) ?? 
         null)
-
-        console.log(req.cookies)
-
-        const userId = (userToken !== null) ? verifyJwt<JwtPayload>(userToken, "accessPublic")?.sub : null
+        
+        const userId = (userToken !== null) ? verifyJwt<JwtPayload>(userToken, "accessPublic")?.userid : null
 
         const contextObject = {
             req,
@@ -27,8 +24,6 @@ export const contextBuilder = (req: Request, res: Response): IUserContext => {
             userToken,
             userId
         } as IUserContext
-
-        console.log(contextObject.userToken, contextObject.userId)
 
         return contextObject
     } catch (err) {
@@ -50,7 +45,6 @@ export const customAuthChecker: AuthChecker<IUserContext> = (
     return isAuth(userToken)
         .then(res => res)
         .catch(err => {
-            console.log(err)
             return err
         })
 }

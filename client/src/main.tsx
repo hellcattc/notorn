@@ -8,10 +8,7 @@ import User from './pages/User'
 
 const link = createHttpLink({
   uri: 'http://localhost:4000/graphql',
-  credentials: 'same-origin',
-  fetchOptions: {
-    mode: 'no-cors'
-  }
+  credentials: 'include'
 })
 
 const client = new ApolloClient({

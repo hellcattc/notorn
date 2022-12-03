@@ -12,7 +12,11 @@ const ME_INFO = gql`
 `
 
 const User = () => {
-	const {loading, error, data} = useQuery(ME_INFO);
+	const {loading, error, data} = useQuery(ME_INFO, {
+    onCompleted: (data) => {
+      console.log(data)
+    }
+  });
 
   return (
     <div>{data}</div>

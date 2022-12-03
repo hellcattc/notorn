@@ -15,16 +15,17 @@ export const signJwt = (
     signKey: 'accessPrivate' | 'refreshPrivate',
     options?: SignOptions
 ) => {
-    const privateKey = Buffer.from(process.env[keys[signKey]] as string, 'base64').toString('utf-8');
+    const privateKey = (process.env[keys[signKey]] as string).replace(/\\n/gm, '\n')
 
     try {
-        return jwt.sign({userid: payload.userid}, privateKey.trim(), {
+        return jwt.sign({userid: payload.userid}, privateKey, {
             ...options,
-            algorithm: 'HS256',
-            subject: payload.email,
+            algorithm: 'RS256'
         })
     } catch (err) {
-        throw new JsonWebTokenError(err)
+        console.log('error signing')
+        console.log(err)
+        throw err
     }
 } 
 
@@ -32,12 +33,16 @@ export const verifyJwt = <T>(
     token: string,
     verifyKey: 'accessPublic' | 'refreshPublic',
 ): T | null => {
-    const publicKey = Buffer.from(process.env[keys[verifyKey]] as string, 'base64').toString('ascii');
+    // const publicKey = Buffer.from(process.env[keys[verifyKey]] as string, 'base64').toString('ascii');
+
+    const publicKey = (process.env[keys[verifyKey]] as string).replace(/\\n/gm, '\n')
+
     try {
         return jwt.verify(token, publicKey.trim(), {
-            algorithms: ['HS256']
+            algorithms: ['RS256']
         }) as T
     } catch (err) {
+        console.log('error verifying')
         throw new JsonWebTokenError(err)
     }
 }
