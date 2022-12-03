@@ -1,12 +1,12 @@
 import { SignUpResponse } from './../schema/UserTypes';
-import { IUserContext } from '../../utils/authTools';
+import { IUserContext } from '../context/contextType'
 import PGDataSource from "../../config/connectPS";
 import * as bcrypt from 'bcrypt'
 import { User } from "../entities/user";
 import { redisClient } from "../../config/connectRedis";
 import { signJwt, verifyJwt } from "../../utils/jwt";
 import { CookieOptions } from 'express';
-import { JwtPayload, SignOptions } from 'jsonwebtoken';
+import { JwtPayload } from 'jsonwebtoken';
 import * as errConstants from '../../errConstants'
 
 const userRepository = PGDataSource.getRepository(User);
@@ -90,6 +90,7 @@ export async function isAuth(userToken: string): Promise<Boolean> {
         }
 
         return true
+
     } catch (err) {
         console.log(err)
         throw err

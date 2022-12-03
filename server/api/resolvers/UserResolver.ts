@@ -12,7 +12,7 @@ import {
     signUp,
     userProfile 
 } from "../methods/user.methods";
-import { IUserContext } from "../../utils/authTools"
+import { IUserContext } from '../context/contextType';
 
 @Resolver()
 export default class UserResolver {

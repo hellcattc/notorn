@@ -7,7 +7,9 @@ import { pgDataSource, connectRedis } from "./config/database";
 import cors from 'cors';
 import { buildSchema } from 'type-graphql';
 import { express as voyagerMiddleware } from 'graphql-voyager/middleware'
-import { contextBuilder, customAuthChecker } from './utils/authTools'
+import { contextBuilder } from './api/middleware/contextBuilder'
+import customAuthChecker from './api/middleware/customAuthChecker'
+
 const cookieParser = require('cookie-parser')
 
 const port: Number = parseInt(process.env.PORT as string) || 5000
