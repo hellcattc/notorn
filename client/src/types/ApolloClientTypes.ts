@@ -1,17 +1,25 @@
-interface Tokens {
+type Tokens = {
     accessToken: string,
     refreshToken: string,
 }
-export interface SignResponse {
+export type SignResponse = {
     signUpAPI: Tokens
 }
 
-export interface LoginResponse {
+export type LoginResponse = {
     loginAPI: Tokens
 }
 
-export interface UserSignUp {
+export type UserSignUp = {
     username?: string,
     email: string,
     password: string,
+}
+
+export type UserInfo = {
+    userProfileAPI: {
+        username?: string,
+        email: string,
+        userid: string
+    }
 }

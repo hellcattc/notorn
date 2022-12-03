@@ -1,5 +1,7 @@
 import { gql, useQuery } from '@apollo/client'
 import React from 'react'
+import { Box, Container, Typography } from '@mui/material'
+import { UserInfo } from '../types/ApolloClientTypes'
 
 const ME_INFO = gql`
     query {
@@ -12,14 +14,25 @@ const ME_INFO = gql`
 `
 
 const User = () => {
-	const {loading, error, data} = useQuery(ME_INFO, {
+	const {loading, error, data} = useQuery<UserInfo>(ME_INFO, {
     onCompleted: (data) => {
       console.log(data)
     }
   });
 
   return (
-    <div>{data}</div>
+    <Box 
+      height='100vh'
+      display='flex'
+      justifyContent='center'
+      alignItems='center'
+    >
+      <Container maxWidth='md'>
+        <Typography display='block' width='fit-content'>UserID: {data?.userProfileAPI.userid}</Typography>
+        <Typography display='block' width='fit-content'>Username: {data?.userProfileAPI.username}</Typography>
+        <Typography display='block' width='fit-content'>Email: {data?.userProfileAPI.email}</Typography>
+      </Container>
+    </Box>
   )
 }
 

@@ -26,7 +26,7 @@ const SignUp = () => {
             setCurrentToken(accessToken)
             localStorage.setItem('refreshToken', refreshToken) 
             document.cookie = `token=${accessToken}; SameSite=strict; domain=localhost`
-            // reroute('/me')
+            reroute('/me')
         }
     })
 
@@ -49,9 +49,7 @@ const SignUp = () => {
             display='flex'
             alignItems='center'
         >
-            <Container 
-                maxWidth = 'sm'
-            >
+            <Container maxWidth = 'sm'>
                 <form onSubmit={(e) => handleUserSignUp(e)}>
                     <Grid container direction='column' rowGap={2} paddingTop={'3%'}>
                         <TextField 
@@ -62,7 +60,7 @@ const SignUp = () => {
                             onChange={(e) => setUsername(e.target.value)}
                             type='text'
                             placeholder='Enter your username'
-                        ></TextField>
+                        />
                         <TextField 
                             id='email' 
                             value={email}
@@ -70,7 +68,7 @@ const SignUp = () => {
                             onChange={(e) => setEmail(e.target.value)}
                             type='text'
                             placeholder='Enter your email'
-                        ></TextField>
+                        />
                         <TextField 
                             id='email' 
                             value={password}
@@ -78,7 +76,7 @@ const SignUp = () => {
                             onChange={(e) => setPassword(e.target.value)}
                             type='text'
                             placeholder='Enter your password'
-                        ></TextField>
+                        />
                         <Button type='submit'>Sign Up</Button>
                     </Grid>
                 </form>
