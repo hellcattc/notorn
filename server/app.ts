@@ -12,7 +12,7 @@ import customAuthChecker from './api/middleware/customAuthChecker'
 
 const cookieParser = require('cookie-parser')
 
-const port: Number = parseInt(process.env.PORT as string) || 5000
+const port: Number = parseInt(process.env.SERVER_PORT as string) || 5000
 
 const bootstrap = async () => {
     const app: Application = express();

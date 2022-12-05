@@ -1,7 +1,11 @@
 require("dotenv").config()
 import { createClient } from "redis"
 
-const redisClient = createClient()
+const redisClient = createClient({
+    socket: {
+        host: 'redis'
+    }
+})
 
 const connectRedis = async () => {
     try {

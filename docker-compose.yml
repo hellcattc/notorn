@@ -1,0 +1,35 @@
+services:
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - .:/server
+      - '/server/node_modules'
+    command: ["npm", "run", "dev"]
+    # command: ["../wait-for-it.sh", "postgres:5432", "--", "npm", "run", "dev"]
+    ports:
+      - 4000:4000
+    depends_on:
+      - postgres
+      - redis
+  redis:
+    image: redis:latest
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: ${PGDATABASE}
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
+      PGDATA: "/var/lib/postgresql/data/pgdata"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data/pgdata
+
+volumes:
+  postgres:
+    driver: bridge
