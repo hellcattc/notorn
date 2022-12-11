@@ -3,7 +3,7 @@ import React from 'react'
 import { Box, Container, Typography } from '@mui/material'
 import { UserInfo } from '../types/ApolloClientTypes'
 
-const ME_INFO = gql`
+const MY_INFO = gql`
     query {
         userProfileAPI {
 						userid
@@ -14,7 +14,7 @@ const ME_INFO = gql`
 `
 
 const User = () => {
-	const {loading, error, data} = useQuery<UserInfo>(ME_INFO, {
+	const {loading, error, data} = useQuery<UserInfo>(MY_INFO, {
     onCompleted: (data) => {
       console.log(data)
     }

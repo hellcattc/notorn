@@ -4,6 +4,7 @@ import { UserSignUp, SignResponse } from '../types/ApolloClientTypes'
 import { TextField, Grid, Container, Button, Box } from '@mui/material'
 import { tokenContext } from '../context/TokenProvider'
 import { useNavigate } from 'react-router-dom'
+import validator from 'validator'
 
 
 const SIGN_UP = gql`
@@ -18,6 +19,11 @@ const SIGN_UP = gql`
 const SignUp = () => {
     const { setCurrentToken } = useContext(tokenContext)
     const reroute = useNavigate();
+   
+    const handleUserSignUp = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        signUpUser({variables: {username, email, password} as UserSignUp})
+    }
 
     const [signUpUser, { data, loading, error }] = useMutation<SignResponse>(SIGN_UP, {
         onCompleted: (data) => {
@@ -34,10 +40,7 @@ const SignUp = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
-    const handleUserSignUp = (e: React.FormEvent<HTMLFormElement>) => {
-    	e.preventDefault()
-        signUpUser({variables: {username, email, password} as UserSignUp})
-    }
+    const isEmailInvalid = validator.isEmail(email)
 
     if (loading) return <p>Please, wait</p>
     if (error) return <p>{error.message}</p>
@@ -68,6 +71,8 @@ const SignUp = () => {
                             onChange={(e) => setEmail(e.target.value)}
                             type='text'
                             placeholder='Enter your email'
+                            required
+                            error={isEmailInvalid}
                         />
                         <TextField 
                             id='email' 
@@ -76,6 +81,7 @@ const SignUp = () => {
                             onChange={(e) => setPassword(e.target.value)}
                             type='text'
                             placeholder='Enter your password'
+                            required
                         />
                         <Button type='submit'>Sign Up</Button>
                     </Grid>

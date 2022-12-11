@@ -21,11 +21,8 @@ export class UserInputType implements Partial<User> {
 }
 
 @ObjectType()
-export class SignUpResponse {   
+export class TokenResponse {   
     @Field(type => String)
     accessToken!: string
-
-    @Field(type => String)
-    refreshToken!: string
 }
 

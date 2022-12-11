@@ -4,8 +4,8 @@
   "description": "",
   "main": "app.ts",
   "scripts": {
-    "start": "node server/app.ts",
-    "dev": "nodemon server/app.ts",
+    "start": "node app.ts",
+    "dev": "nodemon app.ts",
     "typeorm": "typeorm-ts-node-commonjs"
   },
   "keywords": [],

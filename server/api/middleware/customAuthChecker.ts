@@ -1,15 +1,15 @@
 import { AuthChecker } from "type-graphql"
 import { IUserContext } from "../context/contextType"
-import { isAuth } from "../methods/user.methods"
+import { isAuth } from "../services/user"
 
 const customAuthChecker: AuthChecker<IUserContext> = (
-    { context: { userToken } }, _
+    { context: { userToken, userId } }, _
 ) => {
-    if (!userToken) {
+    if (!userToken || !userId) {
         return false
     };
 
-    return isAuth(userToken)
+    return isAuth(userToken, userId)
         .then(res => res)
         .catch(err => {
             return err

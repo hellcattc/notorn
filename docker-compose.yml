@@ -1,15 +1,13 @@
 services:
   api:
     build:
+      context: "./server"
       dockerfile: Dockerfile
-      context: .
     env_file:
       - .env
     volumes:
-      - .:/server
-      - '/server/node_modules'
-    command: ["npm", "run", "dev"]
-    # command: ["../wait-for-it.sh", "postgres:5432", "--", "npm", "run", "dev"]
+      - "./server:/app"
+      - "/app/node_modules"
     ports:
       - 4000:4000
     depends_on:
@@ -28,8 +26,19 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres:/var/lib/postgresql/data/pgdata
+      - "postgres:/var/lib/postgresql/data/pgdata"
+
+  client:
+    build: 
+      dockerfile: Dockerfile
+      context: "./client"
+    volumes:
+      - "./client:/app"
+      - "/app/node_modules"
+    ports: 
+      - "5173:5173"
+    depends_on:
+      - api
 
 volumes:
   postgres:
-    driver: bridge

@@ -1,4 +1,4 @@
-import { SignUpResponse, UserInputType } from '../schema/UserTypes';
+import { TokenResponse, UserInputType } from '../schema/UserTypes';
 import { 
     Resolver,
     Mutation,
@@ -11,7 +11,7 @@ import { User } from "../entities/user";
 import { 
     signUp,
     userProfile 
-} from "../methods/user.methods";
+} from "../services/user";
 import { IUserContext } from '../context/contextType';
 
 @Resolver()
@@ -24,10 +24,10 @@ export default class UserResolver {
         return await reqUser
     }
 
-    @Mutation(returns => SignUpResponse)
+    @Mutation(returns => TokenResponse)
     async signUpAPI(@Arg("user") newUserData: UserInputType, @Ctx() ctx: IUserContext): Promise<Object> {
         console.log("Error")
         const tokens = await signUp(newUserData, ctx)
-        return tokens as SignUpResponse
+        return tokens as TokenResponse
     }
 }
