@@ -4,7 +4,7 @@ import { verifyJwt } from "../utils/jwt"
 import { IUserContext } from "../context/contextType"
 
 export const contextBuilder = (req: Request, res: Response): IUserContext => {
-    const userToken = (req.cookies?.token ?? 
+    const userToken = (req.cookies?.access_token ?? 
     (req.headers.authorization && req.headers.authorization.startsWith("Bearer") && req.headers.authorization.split('')[1]) ?? 
     null)
     

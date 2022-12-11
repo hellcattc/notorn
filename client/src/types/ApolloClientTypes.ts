@@ -1,13 +1,5 @@
-type Tokens = {
-    accessToken: string,
-    refreshToken: string,
-}
-export type SignResponse = {
-    signUpAPI: Tokens
-}
-
-export type LoginResponse = {
-    loginAPI: Tokens
+export type Token = {
+    accessToken: string
 }
 
 export type UserSignUp = {

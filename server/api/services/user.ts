@@ -12,14 +12,14 @@ import { tokensOnSignUp } from './token';
 
 const userRepository = PGDataSource.getRepository(User);
 
-const cookieOptions: CookieOptions = {
-    httpOnly: true,
-    domain: 'localhost',
-    sameSite: 'strict'
-}
-
-export const findUser = async (input: string, column: Exclude<keyof User, 'userid' | 'email'>) => {
-    // const user = await userRepository.findOneBy({column: input})
+export const findUserByIdOrEmail = (
+    input: string, column: Extract<keyof User, 'userid' | 'email'>
+):  Promise<User | null> => {
+    const user = userRepository.createQueryBuilder('user')
+        .where(`user.${column} = :${column}`)
+        .setParameter(`${column}`, `${input}`)
+        .getOne()
+    return user
 }
 
 export async function signUp(input: Partial<User>, {res}: IUserContext): Promise<TokenResponse> {

@@ -1,3 +1,4 @@
+import { obtainAccessToken } from './../services/token';
 import { TokenResponse, UserInputType } from '../schema/UserTypes';
 import { 
     Resolver,
@@ -25,9 +26,14 @@ export default class UserResolver {
     }
 
     @Mutation(returns => TokenResponse)
-    async signUpAPI(@Arg("user") newUserData: UserInputType, @Ctx() ctx: IUserContext): Promise<Object> {
-        console.log("Error")
+    async signUpAPI(@Arg("user") newUserData: UserInputType, @Ctx() ctx: IUserContext): Promise<TokenResponse> {
         const tokens = await signUp(newUserData, ctx)
         return tokens as TokenResponse
+    }
+
+    @Query(returns => TokenResponse)
+    async getAccessToken(@Ctx() ctx: IUserContext): Promise<TokenResponse> {
+        const tokens = await obtainAccessToken(ctx)
+        return tokens
     }
 }

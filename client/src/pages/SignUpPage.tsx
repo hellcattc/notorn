@@ -1,17 +1,16 @@
 import React, { useState, useContext }  from 'react'
 import { gql, useMutation } from '@apollo/client'
-import { UserSignUp, SignResponse } from '../types/ApolloClientTypes'
+import { UserSignUp } from '../types/ApolloClientTypes'
 import { TextField, Grid, Container, Button, Box } from '@mui/material'
 import { tokenContext } from '../context/TokenProvider'
 import { useNavigate } from 'react-router-dom'
 import validator from 'validator'
-
+import { Token } from '../types/ApolloClientTypes'
 
 const SIGN_UP = gql`
     mutation ($username: String, $email: String!, $password: String!) {
         signUpAPI(user: {username: $username, email: $email, password: $password}) {
             accessToken
-            refreshToken
         }
     }
 `
@@ -25,13 +24,11 @@ const SignUp = () => {
         signUpUser({variables: {username, email, password} as UserSignUp})
     }
 
-    const [signUpUser, { data, loading, error }] = useMutation<SignResponse>(SIGN_UP, {
-        onCompleted: (data) => {
-            console.log(data)
-            const { accessToken, refreshToken } = data.signUpAPI
+    const [signUpUser, { loading, error }] = useMutation<{signUpAPI: Token}>(SIGN_UP, {
+        onCompleted: ({signUpAPI}) => {
+            const { accessToken } = signUpAPI
             setCurrentToken(accessToken)
-            localStorage.setItem('refreshToken', refreshToken) 
-            document.cookie = `token=${accessToken}; SameSite=strict; domain=localhost`
+            document.cookie = `access_token=${accessToken}; SameSite=strict; domain=localhost`
             reroute('/me')
         }
     })

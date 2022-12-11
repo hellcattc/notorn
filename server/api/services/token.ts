@@ -1,3 +1,5 @@
+import { findUserByIdOrEmail } from './user';
+import { JwtPayload } from 'jsonwebtoken';
 import { verifyJwt } from '../utils/jwt';
 import { IdPayload } from './../types/TokenPayload';
 import { IUserContext } from './../context/contextType';
@@ -36,23 +38,27 @@ const createTokens = <T>(payload: T): Record<keyof TokenResponse | 'refreshToken
 }
 
 const rotateTokens = (
-    {accessToken, refreshToken}: Record<keyof TokenResponse | 'refreshToken', string>,
+    userid: string,
     res: Response
-): void => {
-    redisClient.set(refreshToken, JSON.stringify(accessToken), {
+): TokenResponse => {
+    const { refreshToken, accessToken } = createTokens<IdPayload>({userid})
+
+    redisClient.set(refreshToken, accessToken, {
         EX: accessExpires,
     })
 
     res.cookie('refresh_token', refreshToken, {
         ...cookieOptions, maxAge: refreshExpires, expires: new Date(Date.now() + refreshExpires)
     })
+
+    return { accessToken }
 }
 
 export const tokensOnSignUp = (userid: string, res: Response): TokenResponse => {
     try {
-        const { accessToken, refreshToken } = createTokens(userid)
+        const { accessToken, refreshToken } = createTokens<IdPayload>({userid})
 
-        redisClient.set(refreshToken, JSON.stringify(accessToken), {
+        redisClient.set(refreshToken, accessToken, {
             EX: accessExpires,
         })
 
@@ -60,19 +66,19 @@ export const tokensOnSignUp = (userid: string, res: Response): TokenResponse => 
             ...cookieOptions, maxAge: refreshExpires, expires: new Date(Date.now() + refreshExpires)
         })
 
-        return { accessToken } 
-
+        return { accessToken }
     } catch (err) {
         throw err
     }
 }
 
-export const obtainAccessToken = async ({res, req, userId}: IUserContext): Promise<void> => {
+export const obtainAccessToken = async ({res, req}: IUserContext): Promise<TokenResponse> => {
     const refreshToken = req?.cookies['refresh_token'] as string
     if (!refreshToken) throw ClientError("UNAUTHORIZED")
-    const decoded = verifyJwt(refreshToken, 'REFRESH_PUBLIC')
-    
-    const accessToken = await redisClient.get(refreshToken) 
+    const decoded = verifyJwt<JwtPayload>(refreshToken, 'REFRESH_PUBLIC')
+    const userFromToken = decoded?.userId
+    if (await findUserByIdOrEmail(userFromToken, 'userid') === null) throw ClientError("UNAUTHORIZED")
+    const accessToken = await redisClient.get(refreshToken)
     if (!accessToken) throw ClientError("UNAUTHORIZED")
-    rotateTokens(createTokens(userId), res)
+    return rotateTokens(userFromToken, res)
 }
