@@ -1,17 +1,17 @@
-export type Token = {
-    accessToken: string
+export interface Token {
+  accessToken: string
 }
 
-export type UserSignUp = {
-    username?: string,
-    email: string,
-    password: string,
+export interface UserSignUp {
+  username?: string
+  email: string
+  password: string
 }
 
-export type UserInfo = {
-    userProfileAPI: {
-        username?: string,
-        email: string,
-        userid: string
-    }
+export interface UserInfo {
+  userProfileAPI: {
+    username?: string
+    email: string
+    userid: string
+  }
 }

@@ -39,7 +39,7 @@ export async function userProfile(userCtx: IUserContext): Promise<User> {
     return userRepository.findOneBy({userid: userCtx.userId}) as Promise<User>
 }
 
-export async function isAuth(userToken: string, userId: string | undefined): Promise<Boolean> {
+export async function isPresent(userToken: string, userId: string | undefined): Promise<boolean> {
     try {
         const decoded = verifyJwt<JwtPayload>(userToken, 'ACCESS_PUBLIC');
 
@@ -54,7 +54,6 @@ export async function isAuth(userToken: string, userId: string | undefined): Pro
         return true
 
     } catch (err) {
-        console.log(err)
         throw err
     }
 }

@@ -1,19 +1,30 @@
 import { AuthChecker } from "type-graphql"
 import { IUserContext } from "../context/contextType"
-import { isAuth } from "../services/user"
+import { isPresent } from "../services/user"
+import { obtainAccessToken } from "../services/token"
 
-const customAuthChecker: AuthChecker<IUserContext> = (
-    { context: { userToken, userId } }, _
+const silentAuth = async ({req, res}: IUserContext) => {
+    try {
+        await obtainAccessToken({res, req})
+        return true
+    } catch (err) {
+        throw err
+    }
+}
+
+const customAuthChecker: AuthChecker<IUserContext> = async (
+    { context: { userToken, userId, req, res } }, _
 ) => {
     if (!userToken || !userId) {
-        return false
-    };
+        return await silentAuth({req, res})
+    } else {
+        try {
+            return await isPresent(userToken, userId)
+        } catch (err) {
+            throw err
+        }
 
-    return isAuth(userToken, userId)
-        .then(res => res)
-        .catch(err => {
-            return err
-        })
+    }
 }
 
 export default customAuthChecker

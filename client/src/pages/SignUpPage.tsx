@@ -1,11 +1,9 @@
-import React, { useState, useContext }  from 'react'
+import React, { useState } from 'react'
 import { gql, useMutation } from '@apollo/client'
-import { UserSignUp } from '../types/ApolloClientTypes'
+import { UserSignUp, Token } from '../types/ApolloClientTypes'
 import { TextField, Grid, Container, Button, Box } from '@mui/material'
-import { tokenContext } from '../context/TokenProvider'
 import { useNavigate } from 'react-router-dom'
 import validator from 'validator'
-import { Token } from '../types/ApolloClientTypes'
 
 const SIGN_UP = gql`
     mutation ($username: String, $email: String!, $password: String!) {
@@ -15,45 +13,44 @@ const SIGN_UP = gql`
     }
 `
 
-const SignUp = () => {
-    const { setCurrentToken } = useContext(tokenContext)
-    const reroute = useNavigate();
-   
-    const handleUserSignUp = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        signUpUser({variables: {username, email, password} as UserSignUp})
+const SignUp = (): JSX.Element => {
+  const reroute = useNavigate()
+
+  const [signUpUser, { loading, error }] = useMutation<{ signUpAPI: Token }>(SIGN_UP, {
+    onCompleted: ({ signUpAPI }) => {
+      const { accessToken } = signUpAPI
+      document.cookie = `access_token=${accessToken}; SameSite=strict; domain=localhost`
+      reroute('/me')
     }
+  })
 
-    const [signUpUser, { loading, error }] = useMutation<{signUpAPI: Token}>(SIGN_UP, {
-        onCompleted: ({signUpAPI}) => {
-            const { accessToken } = signUpAPI
-            setCurrentToken(accessToken)
-            document.cookie = `access_token=${accessToken}; SameSite=strict; domain=localhost`
-            reroute('/me')
-        }
-    })
+  const handleUserSignUp = (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault()
+    const signUpData: UserSignUp = { username, email, password }
+    void signUpUser({ variables: signUpData })
+  }
 
-    const [username, setUsername] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
-    const isEmailInvalid = validator.isEmail(email)
+  const isEmailInvalid = validator.isEmail(email)
 
-    if (loading) return <p>Please, wait</p>
-    if (error) return <p>{error.message}</p>
+  if (loading) return <p>Please, wait</p>
+  if (error !== undefined) return <p>{error.message}</p>
 
-    return (
-        <Box 
+  return (
+        <Box
             height='100vh'
             justifyContent='center'
             display='flex'
             alignItems='center'
         >
             <Container maxWidth = 'sm'>
-                <form onSubmit={(e) => handleUserSignUp(e)}>
+                <form onSubmit={ (e) => handleUserSignUp(e) }>
                     <Grid container direction='column' rowGap={2} paddingTop={'3%'}>
-                        <TextField 
-                            id='username' 
+                        <TextField
+                            id='username'
                             autoFocus={true}
                             value={username}
                             variant='outlined'
@@ -61,8 +58,8 @@ const SignUp = () => {
                             type='text'
                             placeholder='Enter your username'
                         />
-                        <TextField 
-                            id='email' 
+                        <TextField
+                            id='email'
                             value={email}
                             variant='outlined'
                             onChange={(e) => setEmail(e.target.value)}
@@ -71,8 +68,8 @@ const SignUp = () => {
                             required
                             error={isEmailInvalid}
                         />
-                        <TextField 
-                            id='email' 
+                        <TextField
+                            id='email'
                             value={password}
                             variant='outlined'
                             onChange={(e) => setPassword(e.target.value)}
@@ -85,7 +82,7 @@ const SignUp = () => {
                 </form>
             </Container>
         </Box>
-    )
+  )
 }
 
 export default SignUp

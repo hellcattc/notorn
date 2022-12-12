@@ -13,15 +13,15 @@ const MY_INFO = gql`
     }
 `
 
-const User = () => {
-	const {loading, error, data} = useQuery<UserInfo>(MY_INFO, {
+const User = (): JSX.Element => {
+  const { data } = useQuery<UserInfo>(MY_INFO, {
     onCompleted: (data) => {
       console.log(data)
     }
-  });
+  })
 
   return (
-    <Box 
+    <Box
       height='100vh'
       display='flex'
       justifyContent='center'

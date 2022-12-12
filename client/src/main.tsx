@@ -12,8 +12,8 @@ const link = createHttpLink({
 })
 
 const client = new ApolloClient({
-  cache: new InMemoryCache,
-  link,
+  cache: new InMemoryCache(),
+  link
 })
 
 const router = createBrowserRouter([
