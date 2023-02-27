@@ -2,7 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { ApolloProvider, ApolloClient, InMemoryCache, createHttpLink } from '@apollo/client'
 import App from './App'
-import TokenProvider from './context/TokenProvider'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import User from './pages/User'
 
@@ -29,10 +28,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <ApolloProvider client = {client}>
-    <TokenProvider>
       <React.StrictMode>
         <RouterProvider router={router} />
       </React.StrictMode>
-    </TokenProvider>
   </ApolloProvider>
 )

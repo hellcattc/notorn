@@ -19,11 +19,16 @@
     },
     "plugins": [
         "react",
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "react-hooks"
     ],
     "rules": {
         "no-tabs":"off",
         "no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
-        "@typescript-eslint/consistent-type-assertions": ["warn", {"assertionStyle": "as", "objectLiteralTypeAssertions": "allow-as-parameter"}]
+        "@typescript-eslint/consistent-type-assertions": [
+            "warn", {"assertionStyle": "as", "objectLiteralTypeAssertions": "allow-as-parameter"}
+        ],
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn"
     }
 }
