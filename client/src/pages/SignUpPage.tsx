@@ -4,6 +4,7 @@ import { UserSignUp, Token } from '../types/ApolloClientTypes'
 import { TextField, Grid, Container, Button, Box } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import validator from 'validator'
+import { faker } from '@faker-js/faker'
 
 const SIGN_UP = gql`
     mutation ($username: String, $email: String!, $password: String!) {
@@ -44,9 +45,22 @@ const SignUp = (): JSX.Element => {
             height='100vh'
             justifyContent='center'
             display='flex'
+            flexDirection='column'
             alignItems='center'
         >
-            <Container maxWidth = 'sm'>
+            <Button
+                variant="contained"
+                onClick={
+                    () => {
+                      setUsername(faker.internet.userName())
+                      setEmail(faker.internet.email())
+                      setPassword(faker.internet.password())
+                    }
+                }
+            >
+                Generate data
+            </Button>
+            <Container maxWidth='sm'>
                 <form onSubmit={ (e) => handleUserSignUp(e) }>
                     <Grid container direction='column' rowGap={2} paddingTop={'3%'}>
                         <TextField

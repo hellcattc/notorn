@@ -9,6 +9,7 @@ import { buildSchema } from 'type-graphql';
 import { express as voyagerMiddleware } from 'graphql-voyager/middleware'
 import { contextBuilder } from './api/middleware/contextBuilder'
 import customAuthChecker from './api/middleware/customAuthChecker'
+import { generalErrorType } from './errConstants'
 const cookieParser = require('cookie-parser')
 
 const port: Number = parseInt(process.env.SERVER_PORT as string) || 4000
@@ -27,7 +28,7 @@ const bootstrap = async () => {
     } as any
 
     app.use(cors({
-        origin: 'client',
+        origin: 'http://localhost:5173',
         credentials: true
     }))
 
@@ -37,7 +38,10 @@ const bootstrap = async () => {
         graphqlHTTP(((req: Request, res: Response, _params: GraphQLParams) => {
             return { 
                 ...graphQLOptions,
-                context: contextBuilder(req, res)
+                context: contextBuilder(req, res),
+                formatError: (err) => {
+                    const error = err
+                }
             }
         }) as Options)
     )

@@ -3,7 +3,7 @@ import {
     Length,
     IsEmail
 } from 'class-validator'
-import { User } from "../entities/user";
+import { User } from "../entities/User";
 
 @InputType()
 export class UserInputType implements Partial<User> {

@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react'
 const TOKEN_REQUEST = gql`
     query{
         getAccessToken {
-            tokens
+          accessToken
         }
     }
 `
@@ -29,6 +29,7 @@ const useTokenOnLogin = (): void => {
       console.log('called get token')
       if (error !== undefined) {
         onFirstLoad.current = false
+        console.log(error)
       }
       if (data !== undefined) {
         const accessToken = data.getAccessToken.accessToken

@@ -5,8 +5,8 @@
   "main": "app.ts",
   "scripts": {
     "start": "node app.ts",
-    "dev": "nodemon app.ts",
-    "typeorm": "typeorm-ts-node-commonjs"
+    "dev": "nodemon -L app.ts",
+    "typeorm": "typeorm-ts-node-commonjs -d ./config/connectPG.ts"
   },
   "keywords": [],
   "author": "",

@@ -8,7 +8,7 @@ import {
     Authorized,
     Ctx
  } from "type-graphql";
-import { User } from "../entities/user";
+import { User } from "../entities/User";
 import { 
     signUp,
     userProfile 

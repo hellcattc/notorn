@@ -6,7 +6,7 @@ enum ClientErrorNames {
 
 type ClientErrorName = keyof typeof ClientErrorNames
 
-const errorTypes = {
+const constantErrorTypes = {
     "UNAUTHORIZED": {
         statusCode: "401",
         message: "Authorize to access"
@@ -19,19 +19,22 @@ const errorTypes = {
         statusCode: "403",
         message: "User already exists"
     }
+} as const
+
+type generalErrorType = {
+    statusCode: typeof constantErrorTypes[ClientErrorName]['statusCode'],
+    message: string;
 } 
 
 function ClientError (error: ClientErrorName): Error
 function ClientError (error: ClientErrorName, message: string): Error
 function ClientError (error: ClientErrorName, message?: string): Error {
     if (message !== undefined) {
-        return new Error(JSON.stringify({
-            error, 
-            message
-        }))
+        return new Error(JSON.stringify({statusCode: constantErrorTypes[error].statusCode, message}))
     } else {
-        return new Error(error)
+        return new Error(JSON.stringify(constantErrorTypes[error]))
     }
 }
 
-export { ClientError }
+export { ClientError, generalErrorType};
+

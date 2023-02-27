@@ -12,8 +12,8 @@ import { SignOptions } from 'jsonwebtoken';
 import { ClientError } from '../../errConstants'
 
 dotenv.config()
-const accessExpires = (parseInt(process.env.ACCESS_EXPIRES as string)*60*1000) 
-const refreshExpires = (parseInt(process.env.REFRESH_EXPIRES as string)*60*1000)
+const accessExpires = (Date.now() + parseInt(process.env.ACCESS_EXPIRES as string)*3600*1000) 
+const refreshExpires = (Date.now() + parseInt(process.env.REFRESH_EXPIRES as string)*3600*1000)
 
 const cookieOptions: CookieOptions = {
     httpOnly: true,
@@ -22,19 +22,23 @@ const cookieOptions: CookieOptions = {
 }
 
 const createTokens = <T>(payload: T): Record<keyof TokenResponse | 'refreshToken', string> => {
-    const accessToken = signJwt<T>(
-        payload, 
-        'ACCESS_PRIVATE', 
-        {expiresIn: accessExpires.toString()} as SignOptions
-    )
+    try {
+        const accessToken = signJwt<T>(
+            payload, 
+            'ACCESS_PRIVATE', 
+            {expiresIn: accessExpires} as SignOptions
+        )
 
-    const refreshToken = signJwt<T>(
-        payload,
-        'REFRESH_PRIVATE',
-        {expiresIn: refreshExpires.toString()} as SignOptions
-    )
+        const refreshToken = signJwt<T>(
+            payload,
+            'REFRESH_PRIVATE',
+            {expiresIn: refreshExpires} as SignOptions
+        )
 
-    return {accessToken, refreshToken}
+        return {accessToken, refreshToken}
+    } catch (err) {
+        throw err
+    }
 }
 
 const rotateTokens = (
@@ -75,8 +79,7 @@ export const tokensOnSignUp = (userid: string, res: Response): TokenResponse => 
 export const obtainAccessToken = async ({res, req}: IUserContext): Promise<TokenResponse> => {
     const refreshToken = req?.cookies['refresh_token'] as string
     if (!refreshToken) throw ClientError("UNAUTHORIZED")
-    const decoded = verifyJwt<JwtPayload>(refreshToken, 'REFRESH_PUBLIC')
-    const userFromToken = decoded?.userId
+    const userFromToken = verifyJwt<JwtPayload>(refreshToken, 'REFRESH_PUBLIC')?.payload.userid
     if (await findUserByIdOrEmail(userFromToken, 'userid') === null) throw ClientError("UNAUTHORIZED")
     const accessToken = await redisClient.get(refreshToken)
     if (!accessToken) throw ClientError("UNAUTHORIZED")

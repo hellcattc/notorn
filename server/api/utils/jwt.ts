@@ -42,7 +42,7 @@ export const verifyJwt = <T>(
     const publicKey = (process.env[verifyKey] as string).replace(/\\n/gm, '\n')
 
     try {
-        return jwt.verify(token, publicKey.trim(), {
+        return jwt.verify(token, publicKey, {
             algorithms: ['RS256']
         }) as T
     } catch (err) {

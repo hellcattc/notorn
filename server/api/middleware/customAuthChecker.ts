@@ -21,7 +21,8 @@ const customAuthChecker: AuthChecker<IUserContext> = async (
         try {
             return await isPresent(userToken, userId)
         } catch (err) {
-            throw err
+            console.log(err)
+            return false
         }
 
     }
