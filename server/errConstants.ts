@@ -1,40 +1,44 @@
 enum ClientErrorNames {
-    "UNAUTHORIZED",
-    "VALIDATION_ERROR",
-    "USER_ALREADY_EXISTS"
+  "UNAUTHORIZED",
+  "VALIDATION_ERROR",
+  "USER_ALREADY_EXISTS",
 }
 
-type ClientErrorName = keyof typeof ClientErrorNames
+type ClientErrorName = keyof typeof ClientErrorNames;
 
 const constantErrorTypes = {
-    "UNAUTHORIZED": {
-        statusCode: "401",
-        message: "Authorize to access"
-    }, 
-    "VALIDATION_ERROR": {
-        statusCode: "400",
-        message: "Wrong parameters"
-    },
-    "USER_ALREADY_EXISTS": {
-        statusCode: "403",
-        message: "User already exists"
-    }
-} as const
+  UNAUTHORIZED: {
+    statusCode: 401,
+    message: "Authorize to access",
+  },
+  VALIDATION_ERROR: {
+    statusCode: 400,
+    message: "Wrong parameters",
+  },
+  USER_ALREADY_EXISTS: {
+    statusCode: 403,
+    message: "User already exists",
+  },
+} as const;
 
 type generalErrorType = {
-    statusCode: typeof constantErrorTypes[ClientErrorName]['statusCode'],
-    message: string;
-} 
+  statusCode: typeof constantErrorTypes[ClientErrorName]["statusCode"];
+  message: string;
+};
 
-function ClientError (error: ClientErrorName): Error
-function ClientError (error: ClientErrorName, message: string): Error
-function ClientError (error: ClientErrorName, message?: string): Error {
-    if (message !== undefined) {
-        return new Error(JSON.stringify({statusCode: constantErrorTypes[error].statusCode, message}))
-    } else {
-        return new Error(JSON.stringify(constantErrorTypes[error]))
-    }
+function ClientError(error: ClientErrorName): Error;
+function ClientError(error: ClientErrorName, message: string): Error;
+function ClientError(error: ClientErrorName, message?: string): Error {
+  if (message !== undefined) {
+    return new Error(
+      JSON.stringify({
+        statusCode: constantErrorTypes[error].statusCode,
+        message,
+      })
+    );
+  } else {
+    return new Error(JSON.stringify(constantErrorTypes[error]));
+  }
 }
 
-export { ClientError, generalErrorType};
-
+export { ClientError, generalErrorType };

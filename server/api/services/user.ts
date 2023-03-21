@@ -3,12 +3,10 @@ import { IUserContext } from '../context/contextType'
 import PGDataSource from "../../config/connectPG";
 import * as bcrypt from 'bcrypt'
 import { User } from "../entities/User";
-import { redisClient } from "../../config/connectRedis";
 import { signJwt, verifyJwt } from "../utils/jwt";
-import { CookieOptions } from 'express';
 import { JwtPayload } from 'jsonwebtoken';
 import * as errConstants from '../../errConstants'
-import { tokensOnSignUp } from './token';
+import { createNewTokens } from './token';
 
 const userRepository = PGDataSource.getRepository(User);
 
@@ -32,7 +30,7 @@ export async function signUp(input: Partial<User>, {res}: IUserContext): Promise
             })) return Promise.reject("User already exists")
 
         const user = await userRepository.save(userRepository.create(input))
-        return tokensOnSignUp(user.userid, res)
+        return createNewTokens(user.userid, res)
     }
     catch (err) {
         console.log(err)
