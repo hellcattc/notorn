@@ -1,17 +1,18 @@
+import { IUserContext } from "./api/context/contextType";
 import "reflect-metadata";
 import userResolver from "./api/resolvers/UserResolver";
 import express, { Application, Request, Response } from "express";
 require("dotenv").config();
-import { graphqlHTTP, GraphQLParams, Options } from "express-graphql";
 import { pgDataSource, connectRedis } from "./config/database";
 import cors from "cors";
 import { buildSchema } from "type-graphql";
-import { express as voyagerMiddleware } from "graphql-voyager/middleware";
 import { contextBuilder } from "./api/middleware/contextBuilder";
 import customAuthChecker from "./api/middleware/customAuthChecker";
-import { generalErrorType } from "./errConstants";
-import { GraphQLError, locatedError } from "graphql";
 const cookieParser = require("cookie-parser");
+import resolversLogger from "./api/middleware/resolversLogger";
+import { ApolloServer } from "@apollo/server";
+import { json } from "body-parser";
+import { expressMiddleware } from "@apollo/server/express4";
 
 const port: Number = parseInt(process.env.SERVER_PORT as string) || 4000;
 
@@ -21,12 +22,12 @@ const bootstrap = async () => {
   let schema = await buildSchema({
     resolvers: [userResolver],
     authChecker: customAuthChecker,
+    globalMiddlewares: [resolversLogger],
   });
 
-  let graphQLOptions = {
-    schema: schema,
-    graphiql: process.env.NODE_ENV == "development",
-  } as any;
+  const server = new ApolloServer<IUserContext>({
+    schema,
+  });
 
   app.use(
     cors({
@@ -35,24 +36,18 @@ const bootstrap = async () => {
     })
   );
 
+  app.use(json());
+
   app.use(cookieParser());
+
+  await server.start();
 
   app.use(
     "/graphql",
-    graphqlHTTP(((req: Request, res: Response, _params: GraphQLParams) => {
-      return {
-        ...graphQLOptions,
-        context: contextBuilder(req, res),
-        customFormatErrorFn(error) {
-          console.log(error);
-          return error;
-        },
-      };
-    }) as Options)
+    expressMiddleware(server, {
+      context: ({ req, res }) => contextBuilder(req, res),
+    })
   );
-
-  process.env.NODE_ENV == "development" &&
-    app.use("/voyager", voyagerMiddleware({ endpointUrl: "/graphql" }));
 
   app.listen(port, () => console.log(`Server port ${port}`));
 

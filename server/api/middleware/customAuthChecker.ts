@@ -2,10 +2,11 @@ import { AuthChecker } from "type-graphql";
 import { IUserContext } from "../context/contextType";
 import { isPresent } from "../services/user";
 import { obtainAccessToken } from "../services/token";
+import { GraphQLError } from "graphql";
+import { constantErrorTypes } from "../../errConstants";
 
 const silentAuth = async ({ req, res }: IUserContext) => {
   try {
-    console.log("this2");
     await obtainAccessToken({ res, req });
     return true;
   } catch (err) {
@@ -19,15 +20,15 @@ const customAuthChecker: AuthChecker<IUserContext> = async (
 ): Promise<boolean> => {
   try {
     if (!userToken || !userId) {
-      console.log("this");
       const access = await silentAuth({ req, res });
-      console.log(access);
       return access;
     } else {
       return await isPresent(userToken, userId);
     }
   } catch (err) {
-    throw err;
+    throw new GraphQLError(constantErrorTypes.UNAUTHORIZED.message, {
+      extensions: { code: constantErrorTypes.UNAUTHORIZED.statusCode },
+    });
   }
 };
 

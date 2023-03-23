@@ -30,7 +30,7 @@ const Home: FC = () => {
     >
       <Container maxWidth="md">
         <Typography display="block" width="fit-content">
-          UserID: {data?.userProfileAPI.userid}
+          UserID: {data?.userProfileAPI.outeruserid}
         </Typography>
         <Typography display="block" width="fit-content">
           Username: {data?.userProfileAPI.username}

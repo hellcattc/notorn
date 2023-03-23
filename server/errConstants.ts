@@ -6,7 +6,7 @@ enum ClientErrorNames {
 
 type ClientErrorName = keyof typeof ClientErrorNames;
 
-const constantErrorTypes = {
+export const constantErrorTypes = {
   UNAUTHORIZED: {
     statusCode: 401,
     message: "Authorize to access",
@@ -19,7 +19,7 @@ const constantErrorTypes = {
     statusCode: 403,
     message: "User already exists",
   },
-} as const;
+} 
 
 type generalErrorType = {
   statusCode: typeof constantErrorTypes[ClientErrorName]["statusCode"];

@@ -71,11 +71,10 @@ export const obtainAccessToken = async ({
   req,
 }: IUserContext): Promise<TokenResponse> => {
   const refreshToken = req?.cookies["refresh_token"] as string;
-  console.log("here");
   if (!refreshToken) throw ClientError("UNAUTHORIZED");
   const userFromToken = verifyJwt<JwtPayload>(refreshToken, "REFRESH_PUBLIC")
     ?.payload.userid;
-  if ((await findUserByIdOrEmail(userFromToken, "userid")) === null)
+  if ((await findUserByIdOrEmail(userFromToken, "inneruserid")) === null)
     throw ClientError("UNAUTHORIZED");
   const accessToken = await redisClient.get(refreshToken);
   if (!accessToken) throw ClientError("UNAUTHORIZED");

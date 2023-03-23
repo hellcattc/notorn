@@ -1,20 +1,11 @@
 import React, { FC, useState } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { UserSignUp, Token } from "../types/ApolloClientTypes";
 import { TextField, Grid, Container, Button, Box } from "@mui/material";
-import { useNavigate, useRouteError } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import validator from "validator";
 import { faker } from "@faker-js/faker";
-
-const SIGN_UP = gql`
-  mutation ($username: String, $email: String!, $password: String!) {
-    signUpAPI(
-      user: { username: $username, email: $email, password: $password }
-    ) {
-      accessToken
-    }
-  }
-`;
+import { SIGN_UP } from "../graphql/requests";
 
 const SignUp: FC = () => {
   const reroute = useNavigate();

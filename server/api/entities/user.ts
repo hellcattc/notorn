@@ -1,13 +1,23 @@
 import { Length } from "class-validator";
 import { Field, ObjectType, createUnionType } from "type-graphql";
-import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  PrimaryColumn,
+  Generated,
+} from "typeorm";
 
 @ObjectType()
-@Entity("users")
+@Entity("user")
 export class User {
-  @Field((type) => String)
   @PrimaryGeneratedColumn("uuid")
-  readonly userid!: string;
+  readonly inneruserid!: string;
+
+  @PrimaryColumn()
+  @Generated("increment")
+  @Field((type) => Number)
+  outeruserid!: number;
 
   @Field((type) => String)
   @PrimaryColumn("varchar")
@@ -24,4 +34,4 @@ export class User {
   accessToken?: string;
 }
 
-type UserResultUnion = User | null
+type UserResultUnion = User | null;
