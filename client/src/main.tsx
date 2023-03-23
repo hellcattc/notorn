@@ -7,10 +7,7 @@ import {
   InMemoryCache,
   createHttpLink,
   ApolloLink,
-  ApolloQueryResult,
 } from "@apollo/client";
-
-import { onError } from "@apollo/client/link/error";
 
 import {
   createBrowserRouter,
@@ -24,33 +21,9 @@ import SignUpPage from "./pages/SignUpPage";
 import Home from "./pages/Home";
 import ErrorPage from "./pages/ErrorPage";
 
-const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
-  console.log(graphQLErrors);
-  console.log(networkError);
-  console.log(operation);
-
-  if (graphQLErrors !== undefined)
-    graphQLErrors.forEach(({ message, locations, path }) =>
-      console.log(
-        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-      )
-    );
-
-  if (networkError !== undefined)
-    console.log(`[Network error]: ${networkError}`);
-});
-
 const httpLink = createHttpLink({
   uri: "http://localhost:4000/graphql",
   credentials: "include",
-});
-
-const resLogger = new ApolloLink((operation, forward) => {
-  console.log(operation.getContext());
-  return forward(operation).map((result) => {
-    console.log(operation.getContext());
-    return result;
-  });
 });
 
 export const client = new ApolloClient({

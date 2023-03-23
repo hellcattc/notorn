@@ -2,13 +2,9 @@ import { useQuery } from "@apollo/client";
 import { Box, Container, Typography } from "@mui/material";
 import React, { FC } from "react";
 import { UserInfo } from "../types/ApolloClientTypes";
-import { MY_INFO, TOKEN_REQUEST } from "../graphql/requests";
-import { useNavigate } from "react-router-dom";
-import { client } from "../main";
+import { MY_INFO } from "../graphql/requests";
 
 const Home: FC = () => {
-  const reroute = useNavigate();
-
   const { data, error } = useQuery<UserInfo>(MY_INFO, {
     onCompleted: (data) => {
       console.log(data);
