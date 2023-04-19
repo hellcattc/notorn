@@ -21,7 +21,6 @@ const bootstrap = async () => {
 
   let schema = await buildSchema({
     resolvers: [userResolver],
-    authChecker: customAuthChecker,
     globalMiddlewares: [resolversLogger],
   });
 

@@ -1,15 +1,10 @@
 FROM node:latest
-WORKDIR /app
+WORKDIR /usr/app
 COPY package*.json tsconfig.json ./
 
 RUN npm install
 
-RUN chown -R node:node /app
-
-# RUN chmod -R 777  /app/node_modules
-
-# RUN mkdir app/node_modules/.vite \
-#     && chown -R node:node /app/node_modules/.vite
+RUN chown -R node:node /usr/app
 
 USER node
 

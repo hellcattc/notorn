@@ -6,15 +6,22 @@ services:
     env_file:
       - .env
     volumes:
-      - "./server:/app"
-      - "/app/node_modules"
+      - "./server:/usr/app"
+      - "/usr/app/node_modules"
     ports:
       - 4000:4000
+      - 9229:9229
     depends_on:
       - postgres
       - redis
   redis:
-    image: redis:latest
+    build:
+      context: "./redis"
+      dockerfile: Dockerfile
+    privileged: true
+    command: sh -c "./init.sh"
+    volumes:
+      - "redis:/data"
   postgres:
     image: postgres:latest
     restart: always
@@ -23,23 +30,24 @@ services:
       POSTGRES_USER: ${PGUSER}
       POSTGRES_PASSWORD: ${PGPASSWORD}
       PGDATA: "/var/lib/postgresql/data/pgdata"
-      POSTGRES_HOST_AUTH_METHOD: 
+      POSTGRES_HOST_AUTH_METHOD:
     ports:
       - "5432:5432"
     volumes:
       - "postgres:/var/lib/postgresql/data/pgdata"
 
   client:
-    build: 
+    build:
       dockerfile: Dockerfile
       context: "./client"
     volumes:
-      - "./client:/app"
-      - "/app/node_modules"
-    ports: 
+      - "./client:/usr/app"
+      - "/usr/app/node_modules"
+    ports:
       - "5173:5173"
     depends_on:
       - api
 
 volumes:
   postgres:
+  redis:

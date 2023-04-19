@@ -26,13 +26,13 @@ const Home: FC = () => {
     >
       <Container maxWidth="md">
         <Typography display="block" width="fit-content">
-          UserID: {data?.userProfileAPI.outeruserid}
+          UserID: {data?.userProfile.outeruserid}
         </Typography>
         <Typography display="block" width="fit-content">
-          Username: {data?.userProfileAPI.username}
+          Username: {data?.userProfile.username}
         </Typography>
         <Typography display="block" width="fit-content">
-          Email: {data?.userProfileAPI.email}
+          Email: {data?.userProfile.email}
         </Typography>
       </Container>
     </Box>

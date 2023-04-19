@@ -1,12 +1,15 @@
-import { Length } from "class-validator";
-import { Field, ObjectType, createUnionType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   PrimaryColumn,
   Generated,
+  OneToOne,
+  JoinColumn,
 } from "typeorm";
+import { Profile } from "./Profile";
+import { UserRolesValues } from "../types/UserResolverTypes";
 
 @ObjectType()
 @Entity("user")
@@ -31,7 +34,11 @@ export class User {
   password!: string;
 
   @Column({ nullable: true, type: "varchar" })
-  accessToken?: string;
+  role?: UserRolesValues;
+
+  @OneToOne(() => Profile)
+  @JoinColumn()
+  profile!: Profile;
 }
 
 type UserResultUnion = User | null;

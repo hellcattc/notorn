@@ -1,29 +1,19 @@
-import { AuthChecker } from "type-graphql";
+import { MiddlewareFn } from "type-graphql";
 import { IUserContext } from "../context/contextType";
 import { isPresent } from "../services/user";
-import { obtainAccessToken } from "../services/token";
 import { GraphQLError } from "graphql";
-import { constantErrorTypes } from "../../errConstants";
+import { ClientError, constantErrorTypes } from "../../errConstants";
 
-const silentAuth = async ({ req, res }: IUserContext) => {
-  try {
-    await obtainAccessToken({ res, req });
-    return true;
-  } catch (err) {
-    throw err;
-  }
-};
-
-const customAuthChecker: AuthChecker<IUserContext> = async (
-  { context: { userToken, userId, req, res } },
-  _
-): Promise<boolean> => {
+const customAuthChecker: MiddlewareFn<IUserContext> = async (
+  { context: { userToken, userId } },
+  next
+) => {
   try {
     if (!userToken || !userId) {
-      const access = await silentAuth({ req, res });
-      return access;
+      throw ClientError("UNAUTHORIZED");
     } else {
-      return await isPresent(userToken, userId);
+      await isPresent(userToken, userId);
+      return next();
     }
   } catch (err) {
     throw new GraphQLError(constantErrorTypes.UNAUTHORIZED.message, {

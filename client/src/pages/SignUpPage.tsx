@@ -10,10 +10,10 @@ import { SIGN_UP } from "../graphql/requests";
 const SignUp: FC = () => {
   const reroute = useNavigate();
 
-  const [signUpUser] = useMutation<{ signUpAPI: Token }>(SIGN_UP, {
-    onCompleted: ({ signUpAPI }) => {
+  const [signUpUser] = useMutation<{ signUp: Token }>(SIGN_UP, {
+    onCompleted: ({ signUp }) => {
       console.log("signed up");
-      const { accessToken } = signUpAPI;
+      const { accessToken } = signUp;
       document.cookie = `access_token=${accessToken}; SameSite=strict; domain=localhost`;
       reroute("/home");
     },

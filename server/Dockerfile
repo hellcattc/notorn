@@ -1,5 +1,5 @@
-FROM node:19-alpine
-WORKDIR /app
+FROM node:alpine
+WORKDIR /usr/app
 COPY package*.json tsconfig.json nodemon.json ./
 RUN npm install
 # ENTRYPOINT ["nodemon", "/app/app.ts"]  

@@ -1,7 +1,7 @@
 import { findUserByIdOrEmail } from "./user";
 import { JwtPayload } from "jsonwebtoken";
 import { verifyJwt } from "../utils/jwt";
-import { IdPayload } from "./../types/TokenPayload";
+import { IdPayload } from "../types/TokenTypes";
 import { IUserContext } from "./../context/contextType";
 import { CookieOptions, Response } from "express";
 import { TokenResponse } from "./../schema/UserTypes";
@@ -22,8 +22,6 @@ const cookieOptions: CookieOptions = {
   domain: "localhost",
   sameSite: "strict",
 };
-
-const saveTokens = () => {};
 
 const createTokens = <T>(
   payload: T
@@ -48,7 +46,9 @@ export const createNewTokens = (
   res: Response
 ): TokenResponse => {
   try {
-    const { accessToken, refreshToken } = createTokens<IdPayload>({ userid });
+    const { accessToken, refreshToken } = createTokens<IdPayload>({
+      inneruserid: userid,
+    });
 
     redisClient.set(refreshToken, accessToken, {
       EX: accessExpires,
@@ -73,7 +73,7 @@ export const obtainAccessToken = async ({
   const refreshToken = req?.cookies["refresh_token"] as string;
   if (!refreshToken) throw ClientError("UNAUTHORIZED");
   const userFromToken = verifyJwt<JwtPayload>(refreshToken, "REFRESH_PUBLIC")
-    ?.payload.userid;
+    ?.payload.inneruserid;
   if ((await findUserByIdOrEmail(userFromToken, "inneruserid")) === null)
     throw ClientError("UNAUTHORIZED");
   const accessToken = await redisClient.get(refreshToken);

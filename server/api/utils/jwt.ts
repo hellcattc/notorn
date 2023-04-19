@@ -1,56 +1,54 @@
-import jwt, { SignOptions, JsonWebTokenError } from 'jsonwebtoken'
-import { IdPayload } from '../types/TokenPayload'
-import dotenv from 'dotenv'
+import jwt, { SignOptions, JsonWebTokenError } from "jsonwebtoken";
+import { IdPayload } from "../types/TokenTypes";
+import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
 enum privateKeys {
-    "ACCESS_PRIVATE",
-    "REFRESH_PRIVATE"
+  "ACCESS_PRIVATE",
+  "REFRESH_PRIVATE",
 }
 
 enum publicKeys {
-    "ACCESS_PUBLIC",
-    "REFRESH_PUBLIC"
+  "ACCESS_PUBLIC",
+  "REFRESH_PUBLIC",
 }
 
 export const signJwt = <T>(
-    payload: T,
-    signKey: keyof typeof privateKeys,
-    options?: SignOptions
+  payload: T,
+  signKey: keyof typeof privateKeys,
+  options?: SignOptions
 ) => {
-    const privateKey = (process.env[signKey] as string).replace(/\\n/gm, '\n')
+  const privateKey = (process.env[signKey] as string).replace(/\\n/gm, "\n");
 
-    try {
-        return jwt.sign({payload}, privateKey, {
-            ...options,
-            algorithm: 'RS256'
-        })
-    } catch (err) {
-        console.log('error signing')
-        console.log(err)
-        throw err
-    }
-} 
+  try {
+    return jwt.sign({ payload }, privateKey, {
+      ...options,
+      algorithm: "RS256",
+    });
+  } catch (err) {
+    console.log("error signing");
+    console.log(err);
+    throw err;
+  }
+};
 
 export const verifyJwt = <T>(
-    token: string,
-    verifyKey: keyof typeof publicKeys
+  token: string,
+  verifyKey: keyof typeof publicKeys
 ): T | null => {
-    // const publicKey = Buffer.from(process.env[keys[verifyKey]] as string, 'base64').toString('ascii');
+  // const publicKey = Buffer.from(process.env[keys[verifyKey]] as string, 'base64').toString('ascii');
 
-    const publicKey = (process.env[verifyKey] as string).replace(/\\n/gm, '\n')
+  const publicKey = (process.env[verifyKey] as string).replace(/\\n/gm, "\n");
 
-    try {
-        return jwt.verify(token, publicKey, {
-            algorithms: ['RS256']
-        }) as T
-    } catch (err) {
-        console.log('error verifying')
-        throw err
-    }
-}
+  try {
+    return jwt.verify(token, publicKey, {
+      algorithms: ["RS256"],
+    }) as T;
+  } catch (err) {
+    console.log("error verifying");
+    throw err;
+  }
+};
 
-export const newTokens = <T>() => {
-
-}
+export const newTokens = <T>() => {};

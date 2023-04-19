@@ -2,7 +2,9 @@
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext", "WebWorker"],
+    "outDir": "./dist",
+    "rootDir": "./src",
     "allowJs": false,
     "skipLibCheck": true,
     "esModuleInterop": false,
@@ -17,11 +19,18 @@
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
     "moduleResolution": "Node",
+    "composite": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "jsx": "react-jsx",
     "noEmit": true,
-    "jsx": "react-jsx"
+    "baseUrl": ".",
+    "paths": {
+      "/*": ["*"]
+    }
   },
-  "include": ["src"],
+  "include": ["src", "src/serviceWorker.ts"],
+  "exclude": ["dist"],
+  "files": [],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

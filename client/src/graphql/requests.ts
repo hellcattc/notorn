@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 
 export const TOKEN_REQUEST = gql`
   query {
-    getAccessToken {
+    refreshToken {
       accessToken
     }
   }
@@ -10,7 +10,7 @@ export const TOKEN_REQUEST = gql`
 
 export const MY_INFO = gql`
   query {
-    userProfileAPI {
+    userProfile {
       outeruserid
       email
       username
@@ -20,9 +20,7 @@ export const MY_INFO = gql`
 
 export const SIGN_UP = gql`
   mutation ($username: String, $email: String!, $password: String!) {
-    signUpAPI(
-      user: { username: $username, email: $email, password: $password }
-    ) {
+    signUp(user: { username: $username, email: $email, password: $password }) {
       accessToken
     }
   }

@@ -1,11 +1,11 @@
+import { User } from "./../entities/User";
 import { TokenResponse, UserInputType } from "./../schema/UserTypes";
 import { IUserContext } from "../context/contextType";
 import PGDataSource from "../../config/connectPG";
 import * as bcrypt from "bcrypt";
-import { User } from "../entities/User";
 import { signJwt, verifyJwt } from "../utils/jwt";
 import { JwtPayload } from "jsonwebtoken";
-import * as errConstants from "../../errConstants";
+import { ClientError } from "../../errConstants";
 import { createNewTokens } from "./token";
 
 const userRepository = PGDataSource.getRepository(User);
@@ -43,11 +43,11 @@ export async function signUp(
 
 export async function userProfile(userCtx: IUserContext): Promise<User> {
   try {
-    console.log(userCtx.userId ?? "no id");
     return userRepository.findOneBy({
       inneruserid: userCtx.userId,
     }) as Promise<User>;
   } catch (err) {
+    console.log("this is err");
     console.log(err);
     throw err;
   }
@@ -56,21 +56,19 @@ export async function userProfile(userCtx: IUserContext): Promise<User> {
 export async function isPresent(
   userToken: string,
   userId: string | undefined
-): Promise<boolean> {
-  try {
-    const expireDate =
-      verifyJwt<JwtPayload>(userToken, "ACCESS_PUBLIC")?.exp ?? 0;
+): Promise<void> {
+  const expireDate =
+    verifyJwt<JwtPayload>(userToken, "ACCESS_PUBLIC")?.exp ?? 0;
 
-    const user = await userRepository.findOneBy({
-      inneruserid: userId,
-    });
+  if (Date.now() >= expireDate) {
+    throw ClientError("UNAUTHORIZED");
+  }
 
-    if (!user || Date.now() >= expireDate) {
-      throw errConstants.ClientError("UNAUTHORIZED");
-    }
+  const user = await userRepository.findOneBy({
+    inneruserid: userId,
+  });
 
-    return true;
-  } catch (err) {
-    throw err;
+  if (!user) {
+    throw ClientError("UNAUTHORIZED");
   }
 }

@@ -9,7 +9,7 @@ export interface UserSignUp {
 }
 
 export interface UserInfo {
-  userProfileAPI: {
+  userProfile: {
     username?: string;
     email: string;
     outeruserid: string;

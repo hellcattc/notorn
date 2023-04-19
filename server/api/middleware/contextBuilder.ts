@@ -1,4 +1,4 @@
-import { IdPayload } from "./../types/TokenPayload";
+import { IdPayload } from "../types/TokenTypes";
 import { Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
 import { verifyJwt } from "../utils/jwt";
@@ -14,12 +14,12 @@ export const contextBuilder = async (
       req.cookies?.access_token ??
       (req.headers.authorization &&
         req.headers.authorization.startsWith("Bearer") &&
-        req.headers.authorization.split("")[1]) ??
+        req.headers.authorization.split(" ")[1]) ??
       null;
 
     const userId =
       userToken !== null
-        ? verifyJwt<JwtPayload>(userToken, "ACCESS_PUBLIC")?.payload.userid
+        ? verifyJwt<JwtPayload>(userToken, "ACCESS_PUBLIC")?.payload.inneruserid
         : null;
 
     const contextObject = {
